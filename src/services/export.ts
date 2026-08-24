@@ -25,6 +25,9 @@ function toCsv(entries: LogEntry[]): string {
 
 const round = (n: number) => Math.round(n * 10) / 10;
 function csvCell(s: string): string {
+  // Neutralize spreadsheet formula injection — a leading =/+/-/@ can be
+  // interpreted as a formula by Excel/Sheets when the CSV is opened.
+  if (/^[=+\-@]/.test(s)) s = `'${s}`;
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
 }
